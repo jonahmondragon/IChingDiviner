@@ -1,0 +1,21 @@
+IChingDiviner - Credits and Attributions
+=========================================
+
+Hexagram Translation Dataset
+---------------------------
+Source: https://github.com/adamblvck/iching-wilhelm-dataset
+Creator: Adam Blvck
+License: MIT
+
+This dataset provides the complete I-Ching hexagram translations used in this application.
+
+Application Icons and Favicons
+------------------------------
+Icons created for IChingDiviner are provided under the same GPL-3.0 license as the application.
+
+Additional Credits
+------------------
+- Qt Framework (LGPL/GPL) - https://www.qt.io
+- Thanks to all contributors and testers
+
+For full license details, see LICENSE file.

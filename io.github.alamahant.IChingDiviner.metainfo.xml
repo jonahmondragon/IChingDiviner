@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component type="desktop-application">
+
+  <id>io.github.alamahant.IChingDiviner</id>
+  <name>IChingDiviner</name>
+  <summary>AI reads your IChing</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+
+<project_license>GPL-3.0-or-later</project_license>
+  <url type="vcs-browser">https://github.com/alamahant/IChingDiviner</url>
+  <description>
+    <p>
+      IChingDiviner is a modern I-Ching divination application that brings the ancient Chinese oracle
+      to your fingertips. Based on the authoritative Wilhelm/Baynes translation, it combines traditional
+      coin-toss divination with optional AI-powered interpretations.
+    </p>
+
+    <p>
+      Divination Methods:
+    </p>
+    <ul>
+      <li>Traditional 3-coin toss method with proper changing line mechanics</li>
+      <li>Manual line-by-line building or one-click auto toss for complete hexagrams</li>
+      <li>Visual distinction between stable and changing lines with color coding</li>
+      <li>Mouse entropy collection for enhanced randomness</li>
+    </ul>
+
+    <p>
+      Visualization:
+    </p>
+    <ul>
+      <li>Traditional stacked line display for hexagrams</li>
+      <li>Artistic seven-circle mandalas generated uniquely for each hexagram</li>
+      <li>Tarot-style card mode for personal deck images</li>
+      <li>Hover zoom for detailed viewing</li>
+      <li>Custom deck import system for personal use</li>
+    </ul>
+
+    <p>
+      AI Integration:
+    </p>
+    <ul>
+      <li>Optional AI interpretations with OpenAI-compatible APIs</li>
+      <li>Support for Groq (free tier), Mistral, OpenAI, Ollama (local), Together AI, DeepSeek</li>
+      <li>Context-aware prompts with source hexagram, changes, and user questions</li>
+      <li>Markdown-formatted responses with headers and lists</li>
+      <li>Secure local storage of API keys</li>
+    </ul>
+
+    <p>
+      Data Management:
+    </p>
+    <ul>
+      <li>Save and load complete divinations with lines, questions, and AI text</li>
+      <li>JSON format for easy backup and portability</li>
+      <li>Settings persistence across sessions</li>
+      <li>Factory reset option for settings</li>
+    </ul>
+
+    <p>
+      User Interface:
+    </p>
+    <ul>
+      <li>Dark theme designed for extended contemplation</li>
+      <li>Dockable panels for meanings and AI interpretations</li>
+      <li>Golden coin display with heads (●) and tails (○)</li>
+      <li>Keyboard shortcuts for all major functions</li>
+      <li>Adjustable splitter between controls and display</li>
+    </ul>
+  </description>
+
+  <url type="homepage">https://github.com/alamahant/IChingDiviner</url>
+  <url type="bugtracker">https://github.com/alamahant/IChingDiviner/issues</url>
+<!--
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main interface with hexagram display and meanings</caption>
+      <image>https://raw.githubusercontent.com/dharma/IChingDiviner/master/screenshots/main.png</image>
+    </screenshot>
+  </screenshots>
+-->
+  <releases>
+    <release version="1.0.0" date="2026-03-18">
+      <description>
+        <p>Initial release of IChingDiviner:</p>
+        <ul>
+          <li>Traditional 3-coin divination with changing lines</li>
+          <li>Complete Wilhelm/Baynes translation (public domain)</li>
+          <li>Hexagram mandala visualization</li>
+          <li>Tarot mode for custom deck images</li>
+          <li>AI interpretation support for multiple providers</li>
+          <li>Save/load divinations in JSON format</li>
+          <li>Mouse entropy collection</li>
+          <li>Dark theme interface</li>
+          <li>Cross-platform support (Linux Flatpak, Windows, macOS)</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+
+  <developer_name>Dharma</developer_name>
+
+  <categories>
+    <category>Graphics</category>
+    <category>Game</category>
+    <category>Utility</category>
+  </categories>
+
+  <keywords>
+    <keyword>iching</keyword>
+    <keyword>i-ching</keyword>
+    <keyword>oracle</keyword>
+    <keyword>divination</keyword>
+    <keyword>wilhelm</keyword>
+    <keyword>hexagram</keyword>
+    <keyword>tarot</keyword>
+    <keyword>mandala</keyword>
+    <keyword>fortune-telling</keyword>
+    <keyword>spirituality</keyword>
+    <keyword>meditation</keyword>
+    <keyword>philosophy</keyword>
+    <keyword>ancient</keyword>
+    <keyword>chinese</keyword>
+  </keywords>
+
+  <content_rating type="oars-1.1" />
+
+  <launchable type="desktop-id">io.github.alamahant.IChingDiviner.desktop</launchable>
+
+  <provides>
+    <binary>IChingDiviner</binary>
+  </provides>
+
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </recommends>
+
+</component>

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=IChingDiviner
+GenericName=I-Ching Oracle and Divination Tool
+Comment=Ancient Chinese divination with Wilhelm translation, mandalas, and optional AI interpretations
+Icon=io.github.alamahant.IChingDiviner
+Exec=IChingDiviner
+Terminal=false
+Categories=Game;Utility;Graphics;
+Keywords=iching;i-ching;oracle;divination;wilhelm;hexagram;tarot;mandala;fortune-telling;spirituality;meditation;philosophy;ancient;chinese;
+StartupNotify=true
+X-Flatpak=io.github.dharma.IChingDiviner
