@@ -72,14 +72,14 @@
 
   <url type="homepage">https://github.com/alamahant/IChingDiviner</url>
   <url type="bugtracker">https://github.com/alamahant/IChingDiviner/issues</url>
-<!--
+
   <screenshots>
     <screenshot type="default">
       <caption>Main interface with hexagram display and meanings</caption>
-      <image>https://raw.githubusercontent.com/dharma/IChingDiviner/master/screenshots/main.png</image>
+      <image>https://raw.githubusercontent.com/alamahant/IChingDiviner/master/screenshots/main.png</image>
     </screenshot>
   </screenshots>
--->
+
   <releases>
     <release version="1.0.0" date="2026-03-18">
       <description>
