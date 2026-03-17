@@ -1,6 +1,6 @@
 # IChingDiviner
 
-![IChingDiviner Logo](io.github.alamahant.IChingDiviner.png)
+![IChingDiviner Logo](screenshots/main.png)
 
 A modern I-Ching divination application with traditional coin toss, Wilhelm translation, mandala visualization, and optional AI interpretations.
 
