@@ -81,6 +81,15 @@
   </screenshots>
 
   <releases>
+
+<releases>
+  <release version="1.0.1" date="2026-03-18">
+    <description>
+      <p>Correct developer name in AppStream metadata.</p>
+    </description>
+  </release>
+</releases>
+
     <release version="1.0.0" date="2026-03-18">
       <description>
         <p>Initial release of IChingDiviner:</p>
@@ -99,7 +108,7 @@
     </release>
   </releases>
 
-  <developer_name>Dharma</developer_name>
+  <developer_name>Alamahant</developer_name>
 
   <categories>
     <category>Graphics</category>

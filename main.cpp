@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setApplicationName("IChingDiviner");
     QCoreApplication::setOrganizationName("Alamahant");
-    QCoreApplication::setApplicationVersion("1.0.0");
+    QCoreApplication::setApplicationVersion("1.0.1");
 
     QDir().mkpath(Constants::appDirPath);
     QDir().mkpath(Constants::decksDirPath);
