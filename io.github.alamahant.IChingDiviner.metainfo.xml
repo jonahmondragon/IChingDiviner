@@ -80,7 +80,7 @@
     </screenshot>
   </screenshots>
 
-  <releases>
+
 
 <releases>
   <release version="1.0.1" date="2026-03-18">
@@ -88,7 +88,7 @@
       <p>Correct developer name in AppStream metadata.</p>
     </description>
   </release>
-</releases>
+
 
     <release version="1.0.0" date="2026-03-18">
       <description>
