@@ -24,6 +24,9 @@
 #include"helpmenudialog.h"
 #include"donationdialog.h"
 #include<QIcon>
+#include<QPixmap>
+#include<QtSvg/QSvgRenderer>
+#include<QFontDatabase>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
     , aiManager(new MistralAPI(this))
     , modelDialog(new ModelSelectorDialog(this))
     , mouseTimer(new QTimer(this))
+
 {
     setWindowTitle("I-Ching Diviner");
     setWindowIcon(QIcon(":/io.github.alamahant.IChingDiviner.png"));
@@ -51,12 +55,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(tossButton, &QPushButton::clicked, this, &MainWindow::onTossClicked);
     connect(resetButton, &QPushButton::clicked, this, &MainWindow::onResetClicked);
 
-
-
-
     isTarotMode = settings.value("istarotmode", false).toBool();
 
     createMenus();
+
+    coinSound = new QSoundEffect(this);
+    coinSound->setSource(QUrl("qrc:/files/coin.wav"));
+    coinSound->setVolume(0.8);
+    QSettings settings;
+    isPlaySounds = settings.value("sounds/isplaysounds", false).toBool();
+    playSoundsAction->setChecked(isPlaySounds);
+    if(isPlaySounds) coinSound->play();
+
 }
 
 MainWindow::~MainWindow()
@@ -83,10 +93,15 @@ void MainWindow::setupUI()
     QHBoxLayout *coinsLayout = new QHBoxLayout(coinDisplayWidget);
     coinsLayout->setContentsMargins(10, 10, 10, 10);
     coinsLayout->setSpacing(10);
-
+    /*
     coinLabel1 = new QLabel("●");
     coinLabel2 = new QLabel("●");
     coinLabel3 = new QLabel("●");
+*/
+    coinLabel1 = new QLabel();
+    coinLabel2 = new QLabel();
+    coinLabel3 = new QLabel();
+    resetCoins();
 
     QFont coinFont;
 #ifndef FLATPAK_BUILD
@@ -104,9 +119,9 @@ void MainWindow::setupUI()
     coinLabel2->setFont(coinFont);
     coinLabel3->setFont(coinFont);
 
-    coinLabel1->setFixedHeight(125); // was 90
-    coinLabel2->setFixedHeight(125);
-    coinLabel3->setFixedHeight(125);
+    coinLabel1->setFixedHeight(160); // was 90
+    coinLabel2->setFixedHeight(160);
+    coinLabel3->setFixedHeight(160);
 
 #endif
 
@@ -125,11 +140,13 @@ void MainWindow::setupUI()
     coinLabel2->setAlignment(Qt::AlignCenter);
     coinLabel3->setAlignment(Qt::AlignCenter);
 
+    /*
     QPalette coinPalette;
     coinPalette.setColor(QPalette::WindowText, QColor(255, 215, 0));
     coinLabel1->setPalette(coinPalette);
     coinLabel2->setPalette(coinPalette);
     coinLabel3->setPalette(coinPalette);
+    */
 
     coinsLayout->addWidget(coinLabel1);
     coinsLayout->addWidget(coinLabel2);
@@ -270,6 +287,7 @@ void MainWindow::setupUI()
 
     //deck combo
     deckCombo = new QComboBox();
+    deckCombo->setToolTip("Your imported IChing decks will appear here.");
     populateDecksComboBox();
     currentDeck = deckCombo->itemText(0);
     deckCombo->setCurrentText(currentDeck);
@@ -292,21 +310,25 @@ void MainWindow::setupUI()
     });
 
 
-    setQuestionButton = new QPushButton("Set a Question", this);
+    openQuestionDialogButton = new QPushButton("Set a Question", this);
 
-    setQuestionButton->setToolTip("Pose a question to be forwarded to AI");
-    connect(setQuestionButton, &QPushButton::clicked, this, &MainWindow::onSetQuestion);
-    controlLayout->addWidget(setQuestionButton);
+    openQuestionDialogButton->setToolTip("Pose a question to be forwarded to AI");
+    connect(openQuestionDialogButton, &QPushButton::clicked, this, &MainWindow::onSetQuestion);
+    controlLayout->addWidget(openQuestionDialogButton);
 
     //shuffle
     shuffleButton = new QPushButton("Enchanted Coins", this);
-    shuffleButton->setToolTip("");
+    shuffleButton->setToolTip("Move the mouse around to gather entropy.\n"
+                              "Simulates physically shaking\n"
+                              "the coins in your palms before tossing.");
     shuffleButton->setCheckable(true);
     shuffleButton->setChecked(false);
     connect(shuffleButton, &QPushButton::toggled, this, &MainWindow::toggleShuffle);
     controlLayout->addWidget(shuffleButton);
 
     aiPredictionButton = new QPushButton("Get AI Interpretation");
+    aiPredictionButton->setToolTip("Your hexagram data together with your question\n"
+                                   "will be forwarded to AI for interpretation");
     connect(aiPredictionButton, &QPushButton::clicked, this, &MainWindow::gatAiInterpretation);
     controlLayout->addWidget(aiPredictionButton);
 
@@ -360,6 +382,7 @@ void MainWindow::setupDarkTheme()
 void MainWindow::onAutoTossClicked()
 {
 
+
     // Perform the divination using IChing
     QList<QList<int>> allCoinTosses = iching->performFullDivination();
 
@@ -370,8 +393,12 @@ void MainWindow::onAutoTossClicked()
 
     // Update the UI with results
     updateHexagramDisplay();
+
+    if(isPlaySounds) coinSound->play();
+
 }
 
+/*
 void MainWindow::displayCoinResults(const QList<int> &coinResults)
 {
     if (coinResults.size() >= 3) {
@@ -392,14 +419,49 @@ void MainWindow::displayCoinResults(const QList<int> &coinResults)
 
     }
 }
+*/
+
+void MainWindow::displayCoinResults(const QList<int> &coinResults)
+{
+    if (coinResults.size() >= 3) {
+        QLabel* coinLabels[] = { coinLabel1, coinLabel2, coinLabel3 };
+
+        for (int i = 0; i < 3; i++) {
+            QString svgPath = (coinResults[i] == 1)
+                ? ":/files/chinese_coin_heads.svg"
+                : ":/files/chinese_coin_tails.svg";
+
+            int size = 170; // just under fixedHeight of 180
+
+            QSvgRenderer renderer(svgPath);
+            QPixmap pixmap(size, size);
+            pixmap.fill(Qt::transparent);
+
+            QPainter painter(&pixmap);
+            painter.setRenderHint(QPainter::Antialiasing);
+            painter.setRenderHint(QPainter::SmoothPixmapTransform);
+            renderer.render(&painter);
+            painter.end();
+
+            coinLabels[i]->setPixmap(pixmap);
+            coinLabels[i]->setAlignment(Qt::AlignCenter);
+        }
+    }
+}
+
 
 void MainWindow::onResetClicked()
 {
 
     // Reset coin display
+
+    /*
     coinLabel1->setText("●");
     coinLabel2->setText("●");
     coinLabel3->setText("●");
+    */
+
+   resetCoins();
 
     // Reset hexagram displays
     sourceHexagramTitleLabel->setText("Source Hexagram");
@@ -632,7 +694,6 @@ void MainWindow::loadTarotCardImage(QLabel* label, int hexagramNumber)
 
 void MainWindow::onTossClicked()
 {
-    //coinSound->play();
 
     // If we don't have 6 lines yet, add one more
     if (iching->getCurrentLines().size() < 6) {
@@ -660,6 +721,7 @@ void MainWindow::onTossClicked()
 
         // Update display after each toss
         updateHexagramDisplay();
+        if(isPlaySounds) coinSound->play();
 
         // show the full meaning
         if (currentLines.size() == 6) {
@@ -701,6 +763,7 @@ void MainWindow::onTossClicked()
     } else {
         meaningTextEdit->setText("Hexagram is complete. Press Reset to start a new divination.");
     }
+
 }
 
 
@@ -1149,6 +1212,18 @@ void MainWindow::createMenus()
 
     });
     //
+    settingsMenu->addSeparator();
+    playSoundsAction = new QAction("Play Sounds", this);
+    playSoundsAction->setCheckable(true);
+
+    connect(playSoundsAction, &QAction::triggered, this, [this](bool checked){
+        isPlaySounds = checked;
+        QSettings settings;
+        settings.setValue("sounds/isplaysounds", checked);
+        settings.sync();
+
+    });
+    settingsMenu->addAction(playSoundsAction);
 
     // Tools Menu
     QMenu *toolsMenu = menuBar->addMenu("&Tools");
@@ -1220,7 +1295,7 @@ void MainWindow::createMenus()
 
     bool showCardActionChecked = settings.value("istarotmode", false).toBool();
 
-    showCardsAction = new QAction("Display Cards      Ctrl+D", this);
+    showCardsAction = new QAction("Display Cards", this);
     showCardsAction->setCheckable(true);
     showCardsAction->setChecked(showCardActionChecked);
     //isTarotMode = showCardActionChecked; // Sync the member variable
@@ -1268,24 +1343,28 @@ void MainWindow::createMenus()
     });
 
     viewMenu->addAction(showCardsAction);
+    viewMenu->addSeparator();
+    // show hide labels
+    hideLabelsAction = new QAction("Hide Hexagram Labels", this);
+    hideLabelsAction->setCheckable(true);
+    hideLabelsAction->setChecked(false);
+    connect(hideLabelsAction, &QAction::toggled, this, [this](bool checked){
+       sourceHexagramDisplayLabel->setVisible(!checked);
+       modifiedHexagramDisplayLabel->setVisible(!checked);
 
-    // shortcuts
-    QShortcut *toggleShortcut = new QShortcut(QKeySequence("Ctrl+D"), this);
-    connect(toggleShortcut, &QShortcut::activated, this, [this]() {
-        // Toggle the action state
-        showCardsAction->toggle();
     });
 
-    // Optional: Add Ctrl+Shift+D as alternative
-    QShortcut *toggleShortcutAlt = new QShortcut(QKeySequence("Ctrl+Shift+D"), this);
-    connect(toggleShortcutAlt, &QShortcut::activated, this, [this]() {
-        showCardsAction->toggle();
-    });
+    viewMenu->addAction(hideLabelsAction);
 
-    // You can also add it to the menu with visible shortcut
+    showCardsAction->setShortcut(QKeySequence("Ctrl+D"));
+    hideLabelsAction->setShortcutVisibleInContextMenu(true);
+
+    hideLabelsAction->setShortcut(QKeySequence("Ctrl+Alt+S"));
+    hideLabelsAction->setShortcutVisibleInContextMenu(true);
+
+    // I can also add it to the menu with visible shortcut
     //showCardsAction->setShortcut(QKeySequence("Ctrl+Shift+D"));
     //showCardsAction->setShortcutVisibleInContextMenu(true);
-    // shortcuts
 
     viewMenu->addSeparator();
     // Help Menu
@@ -1377,7 +1456,7 @@ void MainWindow::onSetQuestion() {
 
         // Create buttons
         QPushButton *setQuestionButton = new QPushButton("Set Question", questionDialog);
-        clearQuestionButton = new QPushButton("Clear", questionDialog);
+        QPushButton* clearQuestionButton = new QPushButton("Clear", questionDialog);
 
         // Connect buttons
         connect(setQuestionButton, &QPushButton::clicked, this, [this, setQuestionButton]() {
@@ -1387,9 +1466,9 @@ void MainWindow::onSetQuestion() {
             QMessageBox::information(this, "Question Set",
                 "Your question has been saved and will be used for AI interpretation.");
 
-            setQuestionButton->setToolTip("Pose a question to be forwarded to AI\n\n"
-                                          "Current question:\n"
-                                          + currentQuestion);
+            openQuestionDialogButton->setToolTip("Pose a question to be forwarded to AI\n\n"
+                                          "Current question:\n\n"
+                                          + question);
             }
 
             //questionDialog->hide();
@@ -1398,6 +1477,11 @@ void MainWindow::onSetQuestion() {
         connect(clearQuestionButton, &QPushButton::clicked, this, [this]() {
             questionInput->clear();
             currentQuestion.clear();
+        });
+
+        QPushButton* closeQuestionDialogButton = new QPushButton("Close", questionDialog);
+        connect(closeQuestionDialogButton, &QPushButton::clicked, this, [this](){
+            questionDialog->hide();
         });
 
         // Create horizontal layout for buttons
@@ -1409,6 +1493,8 @@ void MainWindow::onSetQuestion() {
         questionLayout->addLayout(buttonLayout);
 
         mainLayout->addWidget(questionGroup);
+        mainLayout->addWidget(closeQuestionDialogButton);
+
     }
 
     // Update with existing question if any
@@ -2064,4 +2150,47 @@ void MainWindow::showAIConfigGuide()
     connect(closeButton, &QPushButton::clicked, &dialog, &QDialog::reject);
 
     dialog.exec();
+}
+
+bool MainWindow::loadChineseFont()
+{
+    QStringList fontPaths;
+
+    // 1. Next to binary (local builds)
+    fontPaths << QCoreApplication::applicationDirPath() + "/NotoSerifTC-Black.ttf";
+
+    // 2. Flatpak install
+    fontPaths << "/app/share/" + QCoreApplication::applicationName() + "/fonts/NotoSerifTC-Black.ttf";
+
+    for (const QString& path : fontPaths) {
+        if (QFile::exists(path)) {
+            int fontId = QFontDatabase::addApplicationFont(path);
+            if (fontId != -1) {
+                qDebug() << "Loaded Chinese font from:" << path;
+                return true;
+            }
+        }
+    }
+
+    qDebug() << "Chinese font not found";
+    return false;
+}
+
+void MainWindow::resetCoins()
+{
+    QLabel* coinLabels[] = { coinLabel1, coinLabel2, coinLabel3 };
+    for (int i = 0; i < 3; i++) {
+        QSvgRenderer renderer(QString(":/files/chinese_coin_tails.svg"));
+        QPixmap pixmap(170, 170);
+        pixmap.fill(Qt::transparent);
+
+        QPainter painter(&pixmap);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setOpacity(0.3);
+        renderer.render(&painter);
+        painter.end();
+
+        coinLabels[i]->setPixmap(pixmap);
+        coinLabels[i]->setAlignment(Qt::AlignCenter);
+    }
 }

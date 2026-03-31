@@ -15,8 +15,7 @@ if(FLATPAK_BUILD)
     add_compile_definitions(FLATPAK_BUILD)
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Svg Multimedia)
 #file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/decks DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 
@@ -27,7 +26,7 @@ set(PROJECT_SOURCES
         mainwindow.ui
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+if(true)
     qt_add_executable(IChingDiviner
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
@@ -56,12 +55,12 @@ else()
     endif()
 endif()
 
-target_link_libraries(IChingDiviner PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
+target_link_libraries(IChingDiviner PRIVATE Qt6::Widgets Qt6::Network Qt6::Svg Qt6::Multimedia)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
+if(true)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.IChingDiviner)
 endif()
 set_target_properties(IChingDiviner PROPERTIES
@@ -109,6 +108,17 @@ if(FLATPAK_BUILD)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/files/apple-touch-icon.png"
             DESTINATION "share/icons/hicolor/180x180/apps"
             RENAME "io.github.alamahant.IChingDiviner.png")
+
+        install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/fonts/Noto_Serif_TC/static/NotoSerifTC-Black.ttf"
+                   DESTINATION "share/${PROJECT_NAME}/fonts"
+                   RENAME "NotoSerifTC-Black.ttf")
+else()
+           add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+               COMMAND ${CMAKE_COMMAND} -E copy
+                   "${CMAKE_CURRENT_SOURCE_DIR}/fonts/Noto_Serif_TC/static/NotoSerifTC-Black.ttf"
+                   "$<TARGET_FILE_DIR:${PROJECT_NAME}>/NotoSerifTC-Black.ttf"
+               COMMENT "Copying font to binary directory")
+
 endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)

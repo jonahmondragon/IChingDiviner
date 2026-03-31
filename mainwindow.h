@@ -30,6 +30,7 @@
 #include<QTimer>
 #include<QUrl>
 #include<QSettings>
+#include <QSoundEffect>
 
 class MainWindow : public QMainWindow
 {
@@ -92,8 +93,7 @@ private:
     QString currentDeck;
     void populateDecksComboBox();
     QTextEdit* questionInput;
-    QPushButton* clearQuestionButton;
-    QPushButton* setQuestionButton;
+
     void onSetQuestion();
     QString currentQuestion = "";
     QDialog* questionDialog = nullptr;
@@ -123,6 +123,16 @@ private slots:
     void showAIConfigGuide();
 
 private:
+    QAction* hideLabelsAction;
+    QPushButton* openQuestionDialogButton;
+    void resetCoins();
+    QSoundEffect *coinSound;
+    void playCoinSound(bool);
+    bool isPlaySounds = false;
+    QAction* playSoundsAction;
+public:
+    static bool loadChineseFont();
+
 
 };
 

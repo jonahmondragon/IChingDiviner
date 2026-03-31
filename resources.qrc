@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>io.github.alamahant.IChingDiviner.png</file>
+        <file>files/chinese_coin_heads.svg</file>
+        <file>files/chinese_coin_tails.svg</file>
+        <file>files/coin.wav</file>
     </qresource>
 </RCC>

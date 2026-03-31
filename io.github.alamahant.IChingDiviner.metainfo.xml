@@ -83,6 +83,19 @@
 
 
 <releases>
+
+<release version="1.0.2" date="2026-03-31">
+  <description>
+    <p>Enhanced Chinese character support and improved coin visuals:</p>
+    <ul>
+      <li>Added Noto Serif TC font for proper Chinese character display</li>
+      <li>Replaced generic coins with beautiful SVG coins featuring traditional Chinese calligraphy</li>
+      <li>Added coin toss sound effects with toggle option (Settings → Play Sounds)</li>
+      <li>Various code polish and bug fixes</li>
+    </ul>
+  </description>
+</release>
+
   <release version="1.0.1" date="2026-03-18">
     <description>
       <p>Correct developer name in AppStream metadata.</p>

@@ -17,6 +17,9 @@ int main(int argc, char *argv[])
     QDir().mkpath(Constants::saveDirPath);
 
     QApplication a(argc, argv);
+
+
+    MainWindow::loadChineseFont();
     a.setWindowIcon(QIcon(":/io.github.alamahant.IChingDiviner.png"));
     MainWindow w;
     w.show();
