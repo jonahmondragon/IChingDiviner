@@ -4,6 +4,9 @@
 
 A modern I-Ching divination application with traditional coin toss, hexagram meanings, mandala visualization, and optional AI interpretations.
 
+Available in Flathub:
+https://flathub.org/en/apps/search?q=alamahant
+
 ## Features
 
 - **Traditional 3-coin divination** with changing lines
