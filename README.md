@@ -4,8 +4,13 @@
 
 A modern I-Ching divination application with traditional coin toss, hexagram meanings, mandala visualization, and optional AI interpretations.
 
-Available in Flathub:
-https://flathub.org/en/apps/search?q=alamahant
+## Download Options
+
+| Platform | Where to Get It |
+| :--- | :--- |
+| **Linux** | [Flathub](https://flathub.org/en/apps/io.github.alamahant.IChingDiviner) |
+| **Windows** | [Buy on Gumroad](https://jnanadhakini.gumroad.com/l/qhuipk) - Pre-compiled binary, no compilation needed |
+
 
 ## Features
 
