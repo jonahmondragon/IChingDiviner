@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "clickablelabel.h"
 #include <QLabel>
 #include <QPushButton>
 #include <QDockWidget>
@@ -43,11 +44,16 @@ private slots:
     void onAutoTossClicked();
     void onTossClicked();
     void onResetClicked();
+    void onCoin1Clicked();
+    void onCoin2Clicked();
+    void onCoin3Clicked();
 
 private:
     // UI Components
+    void updateCoinPixmap(int coinIndex, bool state);
     QWidget *centralWidget;
-    QLabel *coinLabel1, *coinLabel2, *coinLabel3;
+    ClickableLabel *coinLabel1, *coinLabel2, *coinLabel3;
+bool coinState0, coinState1, coinState2;
     QPushButton *autoTossButton, *tossButton, *resetButton;
 
     // Source hexagram components

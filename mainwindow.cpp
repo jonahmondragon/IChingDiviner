@@ -28,6 +28,35 @@
 #include<QtSvg/QSvgRenderer>
 #include<QFontDatabase>
 
+void MainWindow::updateCoinPixmap(int coinIndex, bool state)
+{
+    QLabel* coinLabels[] = { coinLabel1, coinLabel2, coinLabel3 };
+
+    if (coinIndex < 0 || coinIndex >= 3) {
+        qWarning() << "Invalid coinIndex in updateCoinPixmap:" << coinIndex;
+        return;
+    }
+
+    QString svgPath = state ? ":/files/chinese_coin_heads.svg" : ":/files/chinese_coin_tails.svg";
+
+    QSvgRenderer renderer(svgPath);
+    if (!renderer.isValid()) {
+        qWarning() << "Failed to load SVG in updateCoinPixmap:" << svgPath;
+        return;
+    }
+
+    QPixmap pixmap(170, 170);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing);
+    renderer.render(&painter);
+    painter.end();
+
+    coinLabels[coinIndex]->setPixmap(pixmap);
+    coinLabels[coinIndex]->setAlignment(Qt::AlignCenter);
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , iching(new IChing(this))
@@ -98,9 +127,13 @@ void MainWindow::setupUI()
     coinLabel2 = new QLabel("●");
     coinLabel3 = new QLabel("●");
 */
-    coinLabel1 = new QLabel();
-    coinLabel2 = new QLabel();
-    coinLabel3 = new QLabel();
+    coinLabel1 = new ClickableLabel();
+    coinLabel2 = new ClickableLabel();
+    coinLabel3 = new ClickableLabel();
+
+    connect(coinLabel1, &ClickableLabel::clicked, this, &MainWindow::onCoin1Clicked);
+    connect(coinLabel2, &ClickableLabel::clicked, this, &MainWindow::onCoin2Clicked);
+    connect(coinLabel3, &ClickableLabel::clicked, this, &MainWindow::onCoin3Clicked);
     resetCoins();
 
     QFont coinFont;
@@ -688,84 +721,22 @@ void MainWindow::loadTarotCardImage(QLabel* label, int hexagramNumber)
     }
 }
 
-
-//////////////////
-
-
 void MainWindow::onTossClicked()
 {
+    // TODO: Replace manualInputActive with actual flag if exists
+    bool manualInputActive = true;
 
-    // If we don't have 6 lines yet, add one more
     if (iching->getCurrentLines().size() < 6) {
-        QList<int> coinToss = iching->performSingleToss();
-        displayCoinResults(coinToss);
-
-        int sum = coinToss[0] + coinToss[1] + coinToss[2];
-        QString lineType;
-        switch (sum) {
-        case 0: lineType = "2"; break; // changing yin
-        case 1: lineType = "0"; break; // stable yin
-        case 2: lineType = "1"; break; // stable yang
-        case 3: lineType = "3"; break; // changing yang
+        QList<int> coinToss;
+        if (manualInputActive) {
+            coinToss.append(coinState0 ? 1 : 0);
+            coinToss.append(coinState1 ? 1 : 0);
+            coinToss.append(coinState2 ? 1 : 0);
         }
-
-        QStringList currentLines = iching->getCurrentLines();
-
-        currentLines.append(lineType);  // First toss becomes line 1 at BOTTOM
-
-        iching->reset();
-
-        for (const QString &line : currentLines) {
-            iching->currentLines.append(line);
-        }
-
-        // Update display after each toss
-        updateHexagramDisplay();
-        if(isPlaySounds) coinSound->play();
-
-        // show the full meaning
-        if (currentLines.size() == 6) {
-            // Get the hexagram numbers
-            int sourceNum = 0;
-            int modifiedNum = 0;
-
-            // Extract the hexagram numbers
-            HexagramInfo sourceInfo = iching->getSourceHexagram();
-            HexagramInfo modifiedInfo = iching->getModifiedHexagram();
-
-            if (!sourceInfo.number.isEmpty()) {
-                QRegularExpression re("^(\\d+)");
-                QRegularExpressionMatch match = re.match(sourceInfo.number);
-                if (match.hasMatch()) {
-                    sourceNum = match.captured(1).toInt();
-                }
-            }
-
-            if (!modifiedInfo.number.isEmpty()) {
-                QRegularExpression re("^(\\d+)");
-                QRegularExpressionMatch match = re.match(modifiedInfo.number);
-                if (match.hasMatch()) {
-                    modifiedNum = match.captured(1).toInt();
-                }
-            }
-
-            // Display the full meanings
-            displayHexagramMeanings(sourceNum, modifiedNum);
-
-
-        } else {
-            // For incomplete hexagrams, show a progress message
-            QString progressMessage = "Line " + QString::number(currentLines.size()) +
-                                      " of 6 added. Continue tossing.";
-
-            meaningTextEdit->setText(progressMessage);
-        }
-    } else {
-        meaningTextEdit->setText("Hexagram is complete. Press Reset to start a new divination.");
     }
-
 }
 
+//////////////////
 
 void MainWindow::updateHexagramDisplay()
 {
@@ -1207,7 +1178,6 @@ void MainWindow::createMenus()
         settings.setValue("freezeUI", checked);
         shouldFreezeUI = checked;
         QString status = checked ? "enabled" : "disabled";
-        qDebug() << "UI freeze during AI processing" << status;
 
 
     });
@@ -1912,7 +1882,6 @@ void MainWindow::loadDivination()
     QMessageBox::information(this, "Success", "Divination loaded successfully.");
 }
 
-
 void MainWindow::showDeckImportGuide()
 {
     QString guide =
@@ -2166,13 +2135,11 @@ bool MainWindow::loadChineseFont()
         if (QFile::exists(path)) {
             int fontId = QFontDatabase::addApplicationFont(path);
             if (fontId != -1) {
-                qDebug() << "Loaded Chinese font from:" << path;
                 return true;
             }
         }
     }
 
-    qDebug() << "Chinese font not found";
     return false;
 }
 
@@ -2194,3 +2161,22 @@ void MainWindow::resetCoins()
         coinLabels[i]->setAlignment(Qt::AlignCenter);
     }
 }
+
+void MainWindow::onCoin1Clicked()
+{
+    coinState0 = !coinState0;
+    updateCoinPixmap(0, coinState0);
+}
+
+void MainWindow::onCoin2Clicked()
+{
+    coinState1 = !coinState1;
+    updateCoinPixmap(1, coinState1);
+}
+
+void MainWindow::onCoin3Clicked()
+{
+    coinState2 = !coinState2;
+    updateCoinPixmap(2, coinState2);
+}
+

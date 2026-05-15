@@ -24,6 +24,7 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        clickablelabel.cpp
 )
 
 if(true)
