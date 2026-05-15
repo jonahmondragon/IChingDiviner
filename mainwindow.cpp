@@ -28,6 +28,8 @@
 #include<QtSvg/QSvgRenderer>
 #include<QFontDatabase>
 
+#define DATETFORMATSTRING "yyyyMMdd_hhmmss_t"
+
 void MainWindow::updateCoinPixmap(int coinIndex, bool state)
 {
     QLabel* coinLabels[] = { coinLabel1, coinLabel2, coinLabel3 };
@@ -1784,7 +1786,7 @@ void MainWindow::saveDivination()
     QString filePath = QFileDialog::getSaveFileName(this,
         "Save Divination",
         Constants::saveDirPath + "/divination_" +
-            QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".json",
+            QDateTime::currentDateTime().toString(DATETFORMATSTRING) + ".json",
         "JSON Files (*.json)");
 
     if (filePath.isEmpty()) return;
@@ -1792,7 +1794,7 @@ void MainWindow::saveDivination()
     QJsonObject root;
 
     // Basic info
-    root["timestamp"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+    root["timestamp"] = QDateTime::currentDateTime().toString(DATETFORMATSTRING);
     root["question"] = currentQuestion;
     root["aiInterpretation"] = aiTextEdit->toPlainText();
     root["deckName"] = currentDeck;

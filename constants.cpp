@@ -2,11 +2,13 @@
 
 namespace Constants {
 
-#ifndef FLATPAK_BUILD
-const QString appDirPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/IChingDiviner";
-#else
-const QString appDirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/IChingDiviner";
-#endif
+// #ifndef FLATPAK_BUILD
+// const QString appDirPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/IChingDiviner";
+// #else
+// const QString appDirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/IChingDiviner";
+// #endif
+
+const QString appDirPath = "/home/jonah/c/IChingDiviner";
 
 const QString decksDirPath = appDirPath + "/decks";
 const QString saveDirPath = appDirPath + "/saved";
